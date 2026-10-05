@@ -1,0 +1,3 @@
+interface:
+  display_name: "Write Agent Prompts"
+  short_description: "Dense, concrete guidance for capable peer agents"
