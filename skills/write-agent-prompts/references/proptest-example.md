@@ -19,6 +19,8 @@ An effective clause names the method and supplies the application:
 
 The method name gives the agent a retrieval cue. The examples anchor it to practical operations. The observation determines the next action. The final constraint keeps the experiment out of the shipped fix.
 
+The full prompt also loads metamorphic testing, grammar-aware generation, round trips, boundary-value analysis, fault injection, failure atomicity, copy-on-write isolation, combinatorial interaction coverage, swarm testing, shrink-aware generation, counterexample generalization, and root-cause clustering. This breadth equips the agent to recognize opportunities beyond the initial leads. A concept need not have a preselected target to belong in the prompt; its role can be to make that target recognizable later.
+
 Another important distinction was **simple and easy to validate** reference implementations. A Vec and O(n²) loops can be appropriate because the model is easier to inspect. Slowness itself is not the objective. Preserve distinctions like this when compressing guidance.
 
 The prompt also separates the search machinery from the deliverable: independently reviewable regression tests and minimal fixes. That output constraint supports a broad, adaptive investigation without transferring the entire exploratory codebase to reviewers.

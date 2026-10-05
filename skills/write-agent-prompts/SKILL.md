@@ -1,58 +1,60 @@
 ---
 name: write-agent-prompts
-description: "Write or refine instructions for capable agents and agent swarms. Use when the deliverable is an agent prompt or reusable operating guidance, especially guidance for recognizing opportunities, choosing domain methods, and adapting an investigation."
+description: "Write dense, concrete prompts and skill instructions for capable peer agents (agentese). Use when shaping target recognition, method selection, and adaptive work in instructions another agent will execute."
 ---
 
 # Write Agent Prompts
 
-Write for a capable peer. Supply the conceptual tools, decision criteria, and task context that improve its judgment. Optimize for useful decisions per unit of context. Here, **agentese** means precise, information-dense technical language with enough concrete meaning to act on.
+Write for a capable peer. **Conceptual breadth:** load as many relevant, high-salience referents as possible, including adjacent methods and lenses. Shape what the agent notices, considers, and tries. Use **semantic compression**: established technical concepts plus the task-specific details that change their application.
 
-## Establish the work
+## Task model and acceptance criteria
 
-Extract the objective, useful deliverables, evidence standard, available capabilities, and actual constraints from the conversation. Preserve the user's distinctions and corrections. Ask about missing information that changes the strategy; let the agent resolve ordinary implementation choices.
+Recover the objective, evidence standard, deliverables, capabilities, and constraints from the conversation. Preserve user corrections as distinctions the prompt must maintain. Resolve uncertainties that change the strategy; leave ordinary implementation choices to the agent.
 
-Separate the investigation from its handoff. A large exploratory artifact may produce a small independently verifiable result. State what the recipient must be able to inspect or reproduce, and let that shape the deliverable.
+Define acceptance through observable artifacts: what must a recipient be able to inspect, reproduce, or decide? Separate exploratory work from its handoff; a large investigation can yield a small independently verifiable result.
 
-## Use high-salience referents
+## Structural abstraction and analogical transfer
 
-Use established names for relevant methodologies, techniques, and conceptual lenses as retrieval cues. A well-chosen term brings a useful body of knowledge into context; its operational clause selects the part needed here.
+Describe the relationships that make a target interesting: dependencies, representations, state transitions, invariants, transformations, or asymmetries between construction and verification. These recognition criteria should work when identifiers and domain vocabulary change.
 
-Connect a cue to the structure that makes it applicable, the action it suggests, and the evidence or decision it should produce. For example: **oracle independence and common-mode failures** directs an agent to inspect whether a reference model shares algorithms or assumptions with production and could agree on the same wrong answer.
+Pair a **lens** that changes what the agent notices with a **technique** for investigating it. History-dependent behavior suggests varying construction histories; model-based stateful differential testing supplies an executable comparison.
 
-Choose cues that change a likely decision. Expand unfamiliar or ambiguous acronyms once. Remove labels that add no usable distinction. Dense prose should remain technically interpretable; avoid cryptic shorthand, invented terminology, persona theatrics, and unexplained catalogs of method names.
+Give examples whose causal structure supports transfer. Invite analogous targets, combinations of methods, and approaches suggested by new evidence. Where an analogy is tempting but invalid, name the missing relationship. Treat target lists as starting points for recognition and extrapolation.
 
-When domain knowledge is uncertain, research candidate methods and adjacent approaches in primary sources before writing the guidance. Check that each technique is expressible with the available tools and appropriate to the task's scale.
+## Retrieval cues and operational grounding
 
-## Teach ways of seeing
+Survey broadly: core techniques, neighboring approaches, alternative formulations, representations, failure mechanisms, and explanatory lenses. Include directly applicable methods and plausible adjacencies that could become useful as the task develops. Group referents by shared structure, application, or relationship so the agent can combine them.
 
-Give the agent structural recognition criteria: responsibilities, dependencies, representations, construction histories, invariants, transformations, and relationships between APIs. These let it find relevant targets whose names never appear in the prompt.
+Established names serve as retrieval cues for attention, recognition, hypothesis generation, and analogical transfer. A cue can contribute before there is an immediate action to attach to it. Familiar terms may stand on their own; ground a cue where ambiguity would change its application: when a method fits, what to do here, what to observe, or how the result changes the next decision.
 
-Distinguish a **lens** that changes what the agent notices from a **technique** that tells it how to investigate. History-dependent behavior is a lens; model-based stateful differential testing is a technique. Pair them when the connection is useful.
+For example, **oracle independence and common-mode failures** directs an agent to check whether a reference model shares algorithms or assumptions with production and could agree on the same wrong answer. The referent supplies a methodology; the clause identifies a concrete failure mechanism.
 
-Use examples to reveal the mechanism. Make the list explicitly extensible: infer analogous targets, combine techniques, and propose approaches suggested by the code or evidence. Give the agent a basis for creativity, including how to recognize that a new idea is promising.
+Disambiguate overloaded terms and expand unfamiliar acronyms once. Avoid cryptic shorthand, invented labels, and persona theatrics. When domain knowledge is uncertain, research adjacent methods in primary sources and verify that the proposed technique is expressible with the available tools.
 
-## Direct effort toward leverage
+## Leverage and work allocation
 
-State the task's leverage criterion. Examples include complex behavior with a simple independent check, outputs cheaper to validate than compute, a shared mechanism behind many symptoms, or information gain relative to execution cost. Use these criteria to prioritize opportunities.
+**Value of information:** prioritize evidence that could change a consequential decision, relative to the cost of obtaining it. Express leverage in task terms: complex behavior with a simple check, outputs cheaper to validate than compute, or one mechanism behind many symptoms. Give the agent grounds for reallocating effort as these estimates change.
 
-For repeated search or evaluation, have the agent build reusable machinery: generators, reference models, analyzers, scripts, or evaluation harnesses. The agent designs and improves the procedure; the resulting program explores cases. Direct attention toward what that machinery can generate, observe, and distinguish.
+**Amortize repeated work:** when repeated search or evaluation dominates, have the agent build generators, reference models, analyzers, scripts, or evaluation harnesses. The program explores cases; the agent improves what it can generate, observe, and distinguish.
 
-For swarm work, specify useful worker boundaries, deliverables, shared investigation state, and how findings are integrated. Allow the planner to adapt roles and assignments within the user's scope and available capabilities.
+For swarm work, specify worker boundaries, shared investigation state, deliverables, and integration. Let the planner adapt assignments within the user's scope and available capabilities.
 
-## Specify feedback and adaptation
+## Feedback and evidence
 
-Describe how evidence changes the next action: reproduce an anomaly, isolate its cause, investigate structural analogues, strengthen an insufficient check, or redirect effort. Let discoveries expand the candidate set.
+**Hypothesis testing and causal isolation:** connect observations to explanations and actions that could distinguish them. On an anomaly, specify what to reproduce, vary, or inspect. **Variant analysis:** use an established mechanism to identify related targets and expand the investigation.
 
-Make negative evidence interpretable. Before concluding that a search found nothing, ask whether its inputs, observations, and checks could reveal the phenomenon. Specify a concrete sensitivity check when one is available.
+**Negative evidence and sensitivity:** define what a quiet search can establish. Its inputs, observations, and checks must be capable of revealing the phenomenon. Where possible, supply a concrete sensitivity check and use failures of that check to improve the procedure.
 
-Distinguish established findings, test or model errors, and genuine ambiguity. Give the agent ownership of technical investigation and a clear reason to involve the human: consequential uncertainty, missing organizational context, or a decision outside the delegated scope. Define continuation and completion in terms of the task's evidence, deliverables, and limits.
+Distinguish established findings, errors in the investigative machinery, and unresolved ambiguity. Specify continuation, completion, and human involvement through evidence, deliverables, and actual limits. Keep technical decisions with the agent; bring consequential uncertainty and missing organizational context to the human.
 
-## Compress and review
+## Counterfactual review and behavioral evaluation
 
-Cut repeated instructions, process narration, generic exhortations, and explanations a capable model can reconstruct. Retain distinctions that change target selection, execution, interpretation, or review. Preserve conditions, dependencies, and failure modes when shortening sentences.
+Consider removing a clause: what concept would lose salience, what analogy or hypothesis would become less available, or what decision might change? Cut duplication, unrelated associations, repeated process narration, and generic exhortations. Retain distinct, plausibly useful referents even when their eventual application is unknown. Preserve consequential conditions, dependencies, failure modes, and user distinctions.
 
-Keep human-facing motivation separate from the executable agent guidance. Let the task determine the prompt's structure; avoid imposing the same section template on every problem.
+Read the prompt as its recipient. Walk through a representative case, an analogous case with different vocabulary, and a plausible case where the method would not apply. Look for a productive first move, method selection, adaptation to evidence, and a recognizable handoff. Use observed ambiguities to revise the guidance.
 
-Read the draft as the agent receiving it. Check whether it supplies a productive first move, criteria for choosing among methods, observations that would change the plan, and a recognizable finished result. Check that examples support generalization and that autonomy is bounded by the actual assignment. Revise based on those decisions, rather than adding more terminology.
+When execution trials are warranted, judge resulting decisions and artifacts. An ablation that removes a cue can test its contribution; a mental walkthrough alone supports an editorial hypothesis. Avoid evaluations that merely check for expected words or headings.
 
-For worked examples of cue selection and operational grounding, read [references/proptest-example.md](references/proptest-example.md). Its testing vocabulary illustrates the method; choose domain-specific cues for each new task.
+Keep human-facing motivation separate from executable agent guidance. Let the task determine the prompt's structure. Put substantial conditional examples in references while keeping the criteria needed to choose an approach in the main instructions.
+
+For worked examples, read [references/proptest-example.md](references/proptest-example.md). Its testing vocabulary illustrates the method; select cues appropriate to each new domain.
