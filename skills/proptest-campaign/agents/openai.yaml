@@ -1,0 +1,3 @@
+interface:
+  display_name: "Proptest Campaign"
+  short_description: "Unfold repo-specific triage and reporting sub-skills for proptest runs"

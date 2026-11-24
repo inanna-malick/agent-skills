@@ -1,0 +1,3 @@
+interface:
+  display_name: "Write Reports"
+  short_description: "Standalone, calibrated technical findings, bug reports, and fixes"

@@ -1,0 +1,63 @@
+---
+name: proptest-campaign
+description: "Specialize a property-testing workflow to a repository's specification domain, caller preconditions, ownership mode, and maintainer channels via staging and partial evaluation—writing lean, role-scoped sub-skills to disk before running parallel model-based discovery."
+---
+
+# Property-testing campaigns: staging and role-scoped specialization
+
+Every repository defines an implicit operating model: which functions claim to be total over arbitrary external inputs vs. partial over caller-established preconditions, whether you are contributing surgical external patches or tightening internal types in a codebase you own, and how confirmed divergences route across maintainer channels. Treat campaign setup as **staging and partial evaluation (`discover_repo >>= (\repo_model -> specialize(workflow, repo_model))`)**: recover that operating model once, write lean repo-specific sub-skills onto disk, and keep subagent contexts strictly role-scoped so each agent loads only the skill and equations its task requires.
+
+Start the coordinator with **this skill alone** rather than loading every skill into one context window; read `write-reports` from the installed skills directory during Step 4 when specializing bucket reporting sub-skills (and `write-agent-prompts` only if authoring a custom domain-discovery sub-skill), and pass `proptest-praxis` by explicit file path only to module discovery workers.
+
+## 1. Delegate initial reconnaissance to a Specification Scout
+
+Keep the coordinator's context window lean by spawning a short-lived, read-only **Specification Scout** subagent (when subagents are available) to read repository docs and translate them into a compact domain-and-contract summary before returning:
+
+- **Domain surfaces and staging rules:** inspect `README`, `CONTRIBUTING.md`, `SECURITY.md`, `AGENTS.md` / `CLAUDE.md`, and issue or PR templates. Return a structured map of (a) public/serialized entry points claiming total-function behavior vs. internal/FFI APIs with caller preconditions, (b) test/DCO conventions and whether maintainers prefer minimal fix PRs vs. issue/reproduction-first discussion, and (c) publication and staging rules from `CONTRIBUTING.md` / `SECURITY.md`—summarized strictly as contact path plus which `(entry_domain × violated_law)` combinations must stay staged locally rather than becoming public branches or PRs.
+- **Workspace architecture and compile loops:** inspect manifests (`Cargo.toml`, `package.json`, `*.gemspec`, `pyproject.toml`), CI configs, test runners (`cargo nextest`, `pytest`, `rake`), feature flags, and `unsafe` or C/FFI wrappers. Identify self-contained leaf crates (`1–3s` incremental builds) vs. heavy umbrella binaries where narrow pocket test binaries keep iteration fast, plus core data structures, planners, parsers, and cross-module `Producer -> Consumer` boundaries.
+- **Existing tests, uncertainty markers, and recent features:** sample existing property tests, grep for maintainer uncertainty comments (`TODO`, `FIXME`, `HACK`, `workaround`, `subtle`), and check `git log` for both recent bugfixes and **recently landed features/modes** whose interactions with older caches, visitors, and serializers lack generative coverage.
+
+## 2. Interview the user on the domain, ownership mode, and routing
+
+Present a compact summary table of inferred repo defaults, then ask only the `2–4` unresolved questions whose answers change domain preconditions, repair philosophy, or routing so the user can approve defaults in one reply or override specific rows. If the user asks to run unattended with defaults, record the inferred assumptions explicitly and proceed.
+
+Pin down four boundaries:
+
+- **Total vs. precondition-gated domains:** which entry points accept external, serialized, or multi-tenant data (claiming total-function behavior: clean `Ok`/`Err` results, `UNCHANGED` outside workspace roots, bounded resource accounting, and safe-wrapper soundness) vs. static developer literals vs. internal/FFI helpers with explicit caller preconditions (e.g., plain script triggers a crash = library bug; C caller violates pointer precondition = caller error; regex engine on arbitrary text vs. fixed literal). Separate explicit API preconditions from incidental habits of current outer callers.
+- **Ownership mode and repair scope ("what is worth fixing, and how deeply"):** whether this is an *external OSS contribution* (favoring minimal surgical diffs verified across sibling branches) or an *owned/internal repository* (where tightening representation types so `|Type| == |ValidStates|`, enforcing envelope bounds in a validated newtype at the boundary, and sweeping sibling call sites via `rg` are welcome), plus which behaviors sit outside the intended operating envelope. Ask which modules matter most and which are deprecated or off-limits.
+- **Outcome buckets and routing (`Divergence -> Bucket_1 | ... | Bucket_k`):** which disjoint outcome buckets this run needs—for example:
+  1. *Correctness PR or internal root-fix PR* (minimal unit test + repair calibrated to ownership mode, verified across the generalized property suite and `--release`),
+  2. *Design / tradeoff note* (reproduction-only unit test + option comparison when fixing alters public semantics, layout, or complexity tradeoffs),
+  3. *Private maintainer report* (when `CONTRIBUTING.md`, `SECURITY.md`, or org norms route external-boundary issues to a non-public channel),
+  4. *Outside-domain drop or local backlog* (logged in `ledger.md` without generating a report).
+  Confirm whether outputs should stage locally for review before creating branches or tickets.
+- **Compute budget:** parallel worktree count, `CARGO_BUILD_JOBS` cap, and availability of `Miri` or compiler sanitizers (`ASan`/`UBSan`).
+
+## 3. Set up the local discovery branch and worktree-safe exclusions
+
+Create a local base branch (e.g., `proptest/discovery`) and run parallel module investigations in dedicated `git worktree` checkouts on per-worker branches (`proptest/work-<module>` off `proptest/discovery`, since Git forbids checking out one branch in multiple worktrees), pruning finished worktree `target/` dirs or sharing `CARGO_TARGET_DIR` per build/sanitizer profile when disk or C `-sys` compile time matters.
+
+Merge reusable verification code—reference models `A`, `alpha` projections, `RepInv` checks, narrow test binaries, and `Arbitrary` strategies—back into `proptest/discovery` so sibling worktrees can rebase cleanly. Append `.proptest-campaign/`, `proptest-regressions/`, `*.proptest-regressions`, and runner log globs to `$(git rev-parse --git-path info/exclude)` (which resolves the shared git exclude file across primary checkouts and linked worktrees where `.git` is a file) so local skills, notes, and regression seeds never dirty `git status` or commit history. Keep `.proptest-campaign/` anchored at `<primary-root>/.proptest-campaign/` and pass its absolute path when delegating to subagents.
+
+## 4. Specialize `.proptest-campaign/` sub-skills on disk
+
+Specialize [`write-reports`](../write-reports/SKILL.md) (if installed alongside this skill, or directly from the structure below) once to compile the repository's operating model into compact files under `<primary-root>/.proptest-campaign/`:
+
+1. **`.proptest-campaign/operating-model.md` — Domain & Routing Table:**
+   - Entry-point domain table (total external vs. precondition-gated), ownership repair policy, and documented non-goals / drop rules.
+   - Static routing table mapping `(entry_domain × violated_law × repair_clarity)` to each bucket once a minimal unit test over synthetic `"a"`/`"b"`/`TempDir` fixtures demonstrates the divergence.
+   - Workspace recipes: fast leaf-crate / pocket-binary commands, child-`Command` `TempDir` isolation notes, `--release` parity checks, `Miri` (`PROPTEST_DISABLE_FAILURE_PERSISTENCE=1 PROPTEST_CASES=16`) and `ASan`/`UBSan` invocations, and `CARGO_BUILD_JOBS` limits.
+2. **`.proptest-campaign/skills/<bucket-name>/SKILL.md` — Per-Channel Reporting Sub-Skills (for deliverable buckets 1–3):**
+   - Write one self-contained `20–30` line skill per deliverable bucket so downstream writer agents need no other skill loaded, locking down: (a) exact `(entry_domain × violated_law × repair_clarity)` admission criteria (using concrete law names: `UNCHANGED` frame law, safe-wrapper soundness, AST spine invariance under leaf substitution, `alpha`/`RepInv` equivalence), (b) required repo verification commands (`HEAD` fail / fix pass, generalized property re-run so patches don't leave sibling branches broken or introduce regressions, `--release` parity), (c) repair depth and native repo test conventions, (d) strict diagnostic honesty (verified facts and outer-caller reachability only, zero speculative scenario prose), and (e) destination (`fix/<slug>` off `main` vs. `.proptest-campaign/out/<bucket>/`).
+3. **`.proptest-campaign/ledger.md` — Campaign State, Equivalence Classes, & Boundary Assumptions:**
+   - Track modules modeled, worktrees, behavioral coverage and mutation-calibration status, **unverified cross-module assumptions** (`producer_module`, `assumed_invariant`, `consumer_to_check`), and divergences grouped into **root-cause equivalence classes** (`id`, `module`, `violated_equation`, `outer_caller_status`, `test_name`, `status: candidate | verified | packaged | dropped`, `bucket`).
+
+## 5. Role-scoped subagent orchestration and cross-module follow-up
+
+Distribute work across lean, role-scoped contexts so every subagent saves tokens, starts with an uncontaminated `<thinking>` frame, and avoids sunk-cost bias. Because subagent harnesses do not auto-expand `$skill` sigils inside delegated prompts or scan `.proptest-campaign/skills/`, pass exact absolute `SKILL.md` file paths and instruct each subagent to read its assigned skill file first (when subagents or nested spawns are unavailable, execute these roles sequentially using `operating-model.md` and `ledger.md` as checkpoints):
+
+1. **Specification Scout (`read-only`, runs once in Step 1):** digests raw repository docs, manifests, and commit history into clean domain/contract terms, then terminates.
+2. **Coordinator (this context — `$proptest-campaign` + `operating-model.md` + `ledger.md`):** selects priority modules (`TODO`/`FIXME` hotspots, `Recent Feature × Older Consumer` pairs, coupled caches/planners), dispatches **Module Conformance Briefs**, sweeps sibling occurrences via `rg` when in owned-repo mode, and whenever Worker A reports *"Module A leaves `X` unnormalized assuming its consumer handles it,"* dispatches a targeted `Producer -> Consumer` brief checking whether Module B actually enforces `X`.
+3. **Model & Harness Workers (read `proptest-praxis/SKILL.md` + a 10–15 line Module Conformance Brief only):** pass *only* the module(s), concrete types `C`, suggested model `alpha: C -> A` / `RepInv` / `UNCHANGED` frame laws, explicit `unsafe`/caller preconditions to uphold, and fast test/sanitizer commands—omitting governance docs and routing buckets. Workers verify that each standalone test fails on unmodified `HEAD` and passes with the candidate fix across the generalized property suite, debug, and `--release` (plus `Miri`/`ASan` where applicable), returning `(file:line, minimal test, command + failure/pass output, violated equation, candidate diff, unverified boundary assumptions)`.
+4. **Fresh-Eyes Reviewer (`read-only`, zero skills loaded — ideally on a second model family):** spawn a fresh source-level `read-only` agent (using a distinct model lineage when available so correlated blind spots don't grade their own homework) with *only* the candidate test, captured `HEAD`/`--release` output, candidate diff, module source, and explicit API preconditions from `operating-model.md`. Confirm against unmodified `HEAD` source and docs that the test and oracle reflect a genuine contract discrepancy, that the witness is cut down to minimal analyzable LOC, that any candidate diff restores the full invariant rather than patching one input while regressing adjacent paths, and record outer-caller reachability.
+5. **Bucket Writer (reads *only* `<primary-root>/.proptest-campaign/skills/<bucket>/SKILL.md` + the verified test, diff, and review note):** produces the clean `main`-based branch or staged diagnostic writeup without exploratory search history in context.
