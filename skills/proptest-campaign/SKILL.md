@@ -61,23 +61,23 @@ Give each subagent a crisp, focused brief and the single skill file its role use
 3. **Model & Harness Workers (given `proptest-praxis/SKILL.md` + a concise `Module Conformance Brief`):** dispatch each worker with a structured brief whose fields keep attention directly on the module's algebra and execution harness:
 
    ```yaml
-   target_sha: <pinned sha>
-   module: <path and named API(s)>
-   promises: <laws to check + citation @ file:line | api-owner-confirmed(id: "<verbatim quote>") | caller-expectation(id: "<verbatim quote>") | hypothesis>
-   model_law: <alpha(step_impl(s, op)) == step_model(alpha(s), op) | cache/solution soundness relation + RepInv>
-   preconditions: <documented caller/unsafe obligations to uphold>
-   commands: <1-3s test target, --release, Miri/ASan, and bwrap/container confinement wrapper>
+   target_sha: "<pinned sha>"
+   module: "<path and named API(s)>"
+   promises: "<laws to check + citation @ file:line | api-owner-confirmed(id: 'verbatim quote') | caller-expectation(id: 'verbatim quote') | hypothesis>"
+   model_law: "<alpha(step_impl(s, op)) == step_model(alpha(s), op) | cache/solution soundness relation + RepInv>"
+   preconditions: "<documented caller/unsafe obligations to uphold>"
+   commands: "<1-3s test target, --release, Miri/ASan, and bwrap/container confinement wrapper>"
    ```
 
    While the worktree and build cache are warm, workers can immediately add checks for adjacent promises on the same module that code reading or testing brings into focus (such as multiset preservation alongside sort order) whenever repo evidence supports them. Workers return one structured `Worker Outcome` per module or root-cause class—setting `law_checked` and `promise_source` to the exact law and evidence that exposed the finding (even when discovered as an adjacent warm-worktree check), while keeping `model_law` in the regression suite:
 
    ```yaml
-   status: verified_clean | confirmed_divergence | open_question
-   provenance: { target_sha, worker_base_sha, depends_on: [<id>], api, promise_source: "<file:line | tagged verbatim quote>" }
-   coverage: { law_checked, ops_covered, calibration_break_caught }
-   witness: <minimal #[test] or observed diagnostic + command & delivery-base/--release output>
-   resolution: <verified candidate diff | candidate contract options | open question>
-   leads: [<produce -> consume assumption or adjacent promise to check next>]
+   status: "verified_clean | confirmed_divergence | open_question"
+   provenance: { target_sha: "<sha>", worker_base_sha: "<sha>", depends_on: ["<id>"], api: "<fn>", promise_source: "<file:line | tagged verbatim quote>" }
+   coverage: { law_checked: "<law>", ops_covered: ["<op>"], calibration_break_caught: "<mutation & step>" }
+   witness: "<minimal #[test] or observed diagnostic + command & delivery-base/--release output>"
+   resolution: "<verified candidate diff | candidate contract options | open question>"
+   leads: ["<produce -> consume assumption or adjacent promise to check next>"]
    ```
 
    When a failure or `Miri`/sanitizer diagnostic directly establishes a violation of a settled module promise, workers replay the minimal test on `target_sha` (recording `depends_on` when unmasked by an earlier `worker_base_sha` repair) and rerun `law_checked` (alongside the brief's `model_law` as a regression guard) over `ops_covered` and `--release` before and after the candidate repair; when two defensible interpretations fit the docs or an observation points outside supported module promises, workers return `status: open_question` with the observed witness and `leads` for the coordinator.
