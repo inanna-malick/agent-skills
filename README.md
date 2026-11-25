@@ -5,7 +5,7 @@ Personal, reusable guidance for coding agents.
 | Skill | Purpose |
 | --- | --- |
 | [proptest-praxis](skills/proptest-praxis/SKILL.md) | Build hermetic property-testing suites with independent models, small-alphabet and equivalence-pair generators, sanitizer checks, and minimal reviewable fixes. |
-| [proptest-campaign](skills/proptest-campaign/SKILL.md) | Recover a repository's operating model, caller preconditions, and triage taxonomy, then write repo-specific routing and reporting sub-skills to disk. |
+| [proptest-campaign](skills/proptest-campaign/SKILL.md) | Recover a repository's API promises, caller preconditions, and deliverable conventions, then write role-scoped sub-skills to disk for parallel model-based verification. |
 | [write-agent-prompts](skills/write-agent-prompts/SKILL.md) | Write guidance for capable peers using high-salience referents, conceptual breadth, structural transfer, and semantic compression. |
 | [write-plans](skills/write-plans/SKILL.md) | Write plans that preserve intent, evidence, a useful method repertoire, and decision criteria across context changes. |
 | [write-reports](skills/write-reports/SKILL.md) | Project technical findings, reproductions, and fixes onto a reader's decision space, contract boundaries, and reporting channel. |
