@@ -22,9 +22,9 @@ Whenever a test failure, property counterexample, or review catch surfaces at `f
   - *Duplicate pocket wrappers:* repeated mini-parsers, quote/fence strippers, connection helpers, or retry loops across sibling crates.
 - **Check module mass and dependency arrows:** inspect large multi-responsibility files (`wc -l`) where distinct strata accumulated in one place, and check `Cargo.toml` / package manifests for inverted dependency arrows that forced downstream modules to duplicate types rather than importing one canonical definition.
 
-## 2. Resolve at the highest applicable rung
+## 2. Scale repair depth to evidence (local fix vs. 4-rung root pull)
 
-Eliminate the root-cause equivalence class at the highest rung that fits the codebase:
+Let the workspace sweep decide the scope of the repair: when the defect is a genuinely isolated local slip with zero sibling occurrences, finish it cleanly with a small local fix and unit test rather than forcing a structural refactor. When the sweep confirms that multiple failures, call sites, or compensating checks share one underlying representation gap, resolve that equivalence class at the highest rung that fits:
 
 1. **Rung 0 — Premise check ("three-adapter rule"):** before sculpting clean types around an awkward interaction, check 10,000-foot product reality—is this behavior something users genuinely want, or early prototype scaffolding that accreted green tests? When a mechanism demands its **third compensating adapter or special-case flag**, pause and ask the human owner one concise two-line question so you delete accidental complexity rather than memorializing it in types.
 2. **Rung 1 — Concept and duplicate-stratum cull (`ΔConcepts <= 0`):** aim for structural fixes that leave the system with *fewer* concepts than before even when test coverage grows. Delete dead `v1` fallback paths, merge parallel `foo` and `foo_v2` strata into one canonical path, and invert tangled package arrows so duplicate helpers disappear.
