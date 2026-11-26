@@ -9,7 +9,7 @@ Personal, reusable guidance for coding agents.
 | [root-and-branch](skills/root-and-branch/SKILL.md) | Trace defects upslope in owned codebases, sweep sibling occurrences of the syntactic idiom, and eliminate whole bug classes via concept deletion and `\|Type\| == \|ValidStates\|`. |
 | [write-agent-prompts](skills/write-agent-prompts/SKILL.md) | Write guidance for capable peers using high-salience referents, conceptual breadth, structural transfer, and semantic compression. |
 | [write-plans](skills/write-plans/SKILL.md) | Write plans that preserve intent, evidence, a useful method repertoire, and decision criteria across context changes. |
-| [write-reports](skills/write-reports/SKILL.md) | Project technical findings, reproductions, and fixes onto a reader's decision space, contract boundaries, and reporting channel. |
+| [write-reports](skills/write-reports/SKILL.md) | Compress counterexamples, regression tests, and fixes onto a maintainer's decision space, API contracts, and contributor workflow. |
 
 The property-testing skills accompany [Property Testing with Agent Swarms](https://recursion.wtf/posts/agents-and-property-tests/). This repository holds the canonical versions; the [original gist](https://gist.github.com/inanna-malick/4e042889df0d8737794a875dda7c8f3c) remains available for existing links.
 
