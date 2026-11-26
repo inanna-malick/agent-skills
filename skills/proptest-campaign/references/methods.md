@@ -1,0 +1,11 @@
+# Campaign staging and verification references
+
+These sources establish the partial-evaluation, modular-verification, and independent-review principles applied in [`SKILL.md`](../SKILL.md).
+
+| Method | Contribution to repository-scale verification | Source |
+| --- | --- | --- |
+| Partial evaluation and Futamura projections | Specialize a general verification workflow against a repository's static contract theory once (`specialize(workflow, repo_model)`), producing lean role-specific sub-skills. | [Futamura, Partial Evaluation of Computation Process](https://link.springer.com/article/10.1023/A:1010095604496); [Jones, Gomard, and Sestoft, Partial Evaluation and Automatic Program Generation](https://studwww.itu.dk/people/sestoft/pebook/) |
+| Rely–Guarantee modular reasoning | Decompose cross-module verification into local module checks paired with explicit `produce -> consume` interface obligations rather than monolithic whole-program state. | [Jones, Tentative Steps Toward a Development Method for Interfering Programs](https://dl.acm.org/doi/10.1145/69575.69577) |
+| Design by Contract | Separate caller-established preconditions from supplier-established postconditions and class invariants so obligations have a single owner. | [Meyer, Applying Design by Contract](https://ieeexplore.ieee.org/document/161279) |
+| Value of information (`VoI`) | Ask only questions whose answers branch downstream specification domains, repair depth, or deliverable routing. | [Howard, Information Value Theory](https://ieeexplore.ieee.org/document/4082064) |
+| N-version decorrelation and independent review | Cross-check candidate counterexamples and repairs in a fresh context—across distinct model lineages when available—to catch correlated blind spots. | [Knight and Leveson, An Experimental Evaluation of the Assumption of Independence in Multi-Version Programming](https://ieeexplore.ieee.org/document/6312944) |

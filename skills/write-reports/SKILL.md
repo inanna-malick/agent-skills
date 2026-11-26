@@ -1,6 +1,6 @@
 ---
 name: write-reports
-description: "Compress technical findings, counterexamples, pull requests, and engineering notes into small, verifiable artifacts calibrated to a reader's decision space and contract boundaries. Use when drafting bug reports, pull requests, design tradeoff notes, advisories, or investigation summaries."
+description: "Compress technical findings, counterexamples, pull requests, and engineering notes into small, verifiable artifacts calibrated to a reader's decision space and contract boundaries. Use when drafting bug reports, pull requests, design tradeoff notes, maintainer handoffs, or investigation summaries."
 ---
 
 # Write Reports
@@ -21,4 +21,4 @@ Select and combine the lenses below as the audience, venue, and finding require.
 
 **Repair ownership; surgical patches, root-type fixes, and reproduction-only.** Match the proposed action to repository ownership and maintainer latitude, sampling recent maintainer commits to match the project's native patch style. For external repositories, supply the smallest complete, idiomatic fix when the contract is clear, noting briefly why the change restores the invariant across sibling paths without regressing fast paths or valid callers (and when an investigation happens to answer an adjacent `TODO` question in the source, include that concrete answer as a small bonus note). For team-owned repositories, apply [`root-and-branch`](../root-and-branch/SKILL.md) when sibling failures warrant culling duplicate wrappers or tightening a shared type (`|Type| == |ValidStates|`) rather than adding point guards. Supply a reproduction-only unit test and a concise comparison of candidate contracts when changing behavior affects public semantics, memory layout, asymptotic complexity, or module boundaries that maintainers should weigh deliberately.
 
-**Channel fit; routing discipline; artifact hygiene.** Match format, detail, and visibility to the project's `CONTRIBUTING.md`, `SECURITY.md`, or team workflow. When project norms designate a private maintainer path for a finding, keep the unit reproduction and notes on that path rather than public branches, issues, or unrelated pull requests until cleared.
+**Channel fit; routing discipline; artifact hygiene.** Match format, detail, and visibility to the project's contributor guides, governance policies, and team workflow. When repository governance designates a maintainer review path for a finding class before opening public issues or pull requests, stage the standalone unit reproduction and notes on that path until cleared.
