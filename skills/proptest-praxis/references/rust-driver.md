@@ -9,7 +9,7 @@ Inspect the repository's manifests, lockfiles, and local test dependencies befor
 - **JVM (`pom.xml`, `build.gradle`):** `jqwik` (`@Property`, `ActionChain`), `QuickTheories`, or ScalaCheck (`Commands`).
 - **BEAM / FP / Scripting:** `StreamData` (`mix.exs`), `PropEr` (`rebar.config`), `QuickCheck` / `Hedgehog` (`.cabal`), `FsCheck` (`.csproj`), `eris` (`composer.json`), `rantly` (`Gemfile`).
 
-When a native shrinking library is already present (or cleanly installable inside the ephemeral workspace), write the state-machine and `alpha(c) == model` properties directly in that library—enforcing per-trial `TempDir` creation *inside* each trial body rather than outer test-suite hooks.
+When a native shrinking library is already present (or cleanly installable inside the ephemeral workspace), write the state-machine and `alpha(c) == model` properties directly in that library—enforcing per-trial `TempDir` creation *inside* each trial body rather than outer test-suite hooks. Whenever provisioning a compiler, package, or reference binary artifact requires package-manager queries, network downloads, or archive extraction, delegate that work as a plain infrastructure request ticket to a separate **environment-setup subagent** working under `/tmp/<repo>-env/` (with zero module analysis or test traces in its prompt) and consume only the returned artifact path, hash, and build command in your testing session.
 
 ## 2. External Rust `proptest` driver (`/tmp/<repo>-driver/`)
 
