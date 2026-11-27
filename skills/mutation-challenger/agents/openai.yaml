@@ -1,0 +1,3 @@
+interface:
+  display_name: "Mutation Challenger"
+  short_description: "Challenge green test suites with realistic semantic mutants and distinguishing inputs"
