@@ -1,20 +1,30 @@
-# Agent skills
+# Agent Skills
 
-Personal, reusable guidance for coding agents.
+Portable, CLI-agnostic skills for frontier coding agents (`Claude Code`, `Codex`, `Gemini`, and peer CLI runners). Rather than shipping shell wrappers or custom harnesses, each skill is written as a dense specification optimized for agent comprehension over human skimming—using exact formal-methods, type-design, and systems terms to recruit strong pretraining priors; if a phrase looks unfamiliar, ask your frontier LLM to unpack what work it is doing.
 
-| Skill | Purpose |
-| --- | --- |
-| [proptest-praxis](skills/proptest-praxis/SKILL.md) | Build referentially transparent property-testing suites with refinement models, algebraic defect laws, small-scope generators, and minimal reviewable fixes. |
-| [proptest-campaign](skills/proptest-campaign/SKILL.md) | Recover a repository's API promises, caller preconditions, and deliverable conventions, then write role-scoped sub-skills to disk for parallel model-based verification. |
-| [root-and-branch](skills/root-and-branch/SKILL.md) | Trace defects upslope in owned codebases, sweep sibling occurrences of the syntactic idiom, and eliminate whole bug classes via concept deletion and `\|Type\| == \|ValidStates\|`. |
-| [write-agent-prompts](skills/write-agent-prompts/SKILL.md) | Write guidance for capable peers using high-salience referents, conceptual breadth, structural transfer, and semantic compression. |
-| [write-plans](skills/write-plans/SKILL.md) | Write plans that preserve intent, evidence, a useful method repertoire, and decision criteria across context changes. |
-| [write-reports](skills/write-reports/SKILL.md) | Compress counterexamples, regression tests, and fixes onto a maintainer's decision space, API contracts, and contributor workflow. |
+### Property Testing, Bug Elimination, and Maintainer Reporting
 
-The property-testing skills accompany [Property Testing with Agent Swarms](https://recursion.wtf/posts/agents-and-property-tests/). This repository holds the canonical versions; the [original gist](https://gist.github.com/inanna-malick/4e042889df0d8737794a875dda7c8f3c) remains available for existing links.
+| Skill | Mode | Purpose |
+| --- | --- | --- |
+| [proptest-praxis](skills/proptest-praxis/SKILL.md) | Standalone or worker | Build referentially transparent property-testing suites using Hoare/Lamport refinement models, algebraic laws, two-tier `SmallCheck` + swarm generators, and minimal Red–Green unit regressions. |
+| [proptest-campaign](skills/proptest-campaign/SKILL.md) | Multi-agent coordinator | Map a repository's API contracts, caller preconditions, and contributor conventions once, then coordinate parallel subagents across modules, cross-module `produce -> consume` boundaries, mutation checks, and clean-branch patches. |
+| [root-and-branch](skills/root-and-branch/SKILL.md) | Standalone or campaign | Trace defects upslope in owned codebases, sweep sibling occurrences of the generative idiom, and eliminate whole bug classes via concept culling (`ΔConcepts <= 0`) and `\|Type\| == \|ValidStates\|`. |
+| [write-reports](skills/write-reports/SKILL.md) | Standalone or campaign | Compress counterexamples, regression tests, and fixes onto a maintainer's decision space, API contracts, and contributor workflow. |
 
-Each skill lives in its own directory under `skills/`. `SKILL.md` contains its discovery metadata and instructions; supporting references are loaded when relevant.
+### Prompt and Plan Authoring
 
-Link `skills/*` into your agent's skill directory (`~/.codex/skills/` for Codex, `~/.claude/skills/` for Claude Code), or give a single `SKILL.md` directly for standalone tasks (`$proptest-campaign` dispatches `skills/proptest-praxis/SKILL.md` to workers and unfolds `skills/write-reports/SKILL.md` and `skills/root-and-branch/SKILL.md`, so keep the `skills/` directory together when running campaigns). Once loaded, invoke these as `$proptest-praxis`, `$proptest-campaign`, `$root-and-branch`, `$write-agent-prompts`, `$write-plans`, or `$write-reports` (or `/proptest-campaign`, etc., in Claude Code).
+| Skill | Mode | Purpose |
+| --- | --- | --- |
+| [write-agent-prompts](skills/write-agent-prompts/SKILL.md) | Standalone | Write guidance for capable peer agents using high-salience technical referents, conceptual breadth, structural transfer, and pragmatic compression. |
+| [write-plans](skills/write-plans/SKILL.md) | Standalone | Write engineering plans that preserve intent, verified facts, a useful method repertoire, and decision criteria across context changes. |
 
-Keep reusable principles in the skill and domain examples in references. Add guidance when it changes decisions; avoid accumulating instructions that merely retell one task.
+The property-testing skills accompany [Property Testing with Agent Swarms](https://recursion.wtf/posts/agents-and-property-tests/), [Architecting Property-Testing Swarms](https://recursion.wtf/posts/architecting-property-testing-swarms/), and [Maintainer Sympathy](https://recursion.wtf/posts/maintainer-sympathy/). This repository holds the canonical versions; the [original gist](https://gist.github.com/inanna-malick/4e042889df0d8737794a875dda7c8f3c) remains available for existing links.
+
+### Installation and Entry Points
+
+Link `skills/*` into your agent's skill directory (`~/.claude/skills/` for Claude Code, `~/.codex/skills/` for Codex), or pass a single `SKILL.md` directly for a focused task:
+
+- **Single module or bugfix (standalone):** Invoke `/proptest-praxis` (or `$proptest-praxis`), `/root-and-branch`, or `/write-reports` directly in your checkout—no campaign workspace required.
+- **Repository-wide verification (multi-agent):** Keep the `skills/` directory together and invoke `/proptest-campaign` (or `$proptest-campaign`). The coordinator maps repository contracts once, dispatches `skills/proptest-praxis/SKILL.md` (plus the matching language reference under `references/`) to isolated module subagents, and specializes `skills/write-reports/SKILL.md` and `skills/root-and-branch/SKILL.md` for clean output branches and notes.
+
+Each skill lives under `skills/<name>/SKILL.md` with supporting domain or language guides in `references/` loaded only when relevant.
